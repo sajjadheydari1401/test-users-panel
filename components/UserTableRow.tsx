@@ -37,7 +37,7 @@ export default function UserTableRow({
       <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
       <TableCell>
         <IconButton
-          color="primary"
+          color={user.status === "active" ? "success" : "error"}
           onClick={() => onToggleStatus(user.id)}
           sx={{ mr: 1 }}
         >
