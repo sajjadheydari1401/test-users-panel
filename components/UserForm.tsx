@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -47,6 +48,19 @@ export default function UserForm({
       status: "active" as UserStatus,
     },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      reset(initialData);
+    } else {
+      reset({
+        name: "",
+        email: "",
+        role: "",
+        status: "active" as UserStatus,
+      });
+    }
+  }, [initialData, reset]);
 
   const handleFormSubmit = (data: UserFormData) => {
     onSubmit(data);

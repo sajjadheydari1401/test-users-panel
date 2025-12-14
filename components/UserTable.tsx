@@ -30,9 +30,12 @@ export default function UserTable() {
     toggleStatus,
     getFilteredUsers,
     addUser,
+    updateUser,
   } = useUserStore();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState<User | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const filteredUsers = getFilteredUsers();
@@ -58,6 +61,19 @@ export default function UserTable() {
   const handleCreateUser = (data: UserFormData) => {
     addUser(data);
     setCreateDialogOpen(false);
+  };
+
+  const handleEditClick = (user: User) => {
+    setUserToEdit(user);
+    setEditDialogOpen(true);
+  };
+
+  const handleEditUser = (data: UserFormData) => {
+    if (userToEdit) {
+      updateUser(userToEdit.id, data);
+      setEditDialogOpen(false);
+      setUserToEdit(null);
+    }
   };
 
   return (
@@ -100,6 +116,7 @@ export default function UserTable() {
                 user={user}
                 onToggleStatus={toggleStatus}
                 onDeleteClick={handleDeleteClick}
+                onEditClick={handleEditClick}
               />
             ))}
           </TableBody>
@@ -119,6 +136,27 @@ export default function UserTable() {
         onSubmit={handleCreateUser}
         title="Create New User"
         submitLabel="Create"
+      />
+
+      <UserForm
+        open={editDialogOpen}
+        onClose={() => {
+          setEditDialogOpen(false);
+          setUserToEdit(null);
+        }}
+        onSubmit={handleEditUser}
+        initialData={
+          userToEdit
+            ? {
+                name: userToEdit.name,
+                email: userToEdit.email,
+                role: userToEdit.role,
+                status: userToEdit.status,
+              }
+            : undefined
+        }
+        title="Edit User"
+        submitLabel="Update"
       />
     </Box>
   );

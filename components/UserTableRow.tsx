@@ -6,9 +6,15 @@ interface UserTableRowProps {
   user: User;
   onToggleStatus: (id: string) => void;
   onDeleteClick: (user: User) => void;
+  onEditClick: (user: User) => void;
 }
 
-export default function UserTableRow({ user, onToggleStatus, onDeleteClick }: UserTableRowProps) {
+export default function UserTableRow({
+  user,
+  onToggleStatus,
+  onDeleteClick,
+  onEditClick,
+}: UserTableRowProps) {
   return (
     <TableRow
       key={user.id}
@@ -37,7 +43,11 @@ export default function UserTableRow({ user, onToggleStatus, onDeleteClick }: Us
         >
           {user.status === "active" ? <ToggleOff /> : <ToggleOn />}
         </IconButton>
-        <IconButton color="secondary" sx={{ mr: 1 }}>
+        <IconButton
+          color="secondary"
+          sx={{ mr: 1 }}
+          onClick={() => onEditClick(user)}
+        >
           <Edit />
         </IconButton>
         <IconButton color="error" onClick={() => onDeleteClick(user)}>
