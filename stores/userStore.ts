@@ -7,6 +7,7 @@ type UserState = {
   users: User[];
   search: string;
   filterStatus: "all" | UserStatus;
+  isLoading: boolean;
   addUser: (u: Omit<User, "id" | "createdAt">) => void;
   updateUser: (id: string, patch: Partial<User>) => void;
   deleteUser: (id: string) => void;
@@ -15,6 +16,7 @@ type UserState = {
   setFilterStatus: (s: "all" | UserStatus) => void;
   reset: () => void;
   getFilteredUsers: () => User[];
+  setLoading: (loading: boolean) => void;
 };
 
 export const useUserStore = create<UserState>()(
@@ -23,6 +25,7 @@ export const useUserStore = create<UserState>()(
       users: mockUsers,
       search: "",
       filterStatus: "all",
+      isLoading: true,
       addUser: (u) =>
         set((s) => ({
           users: [
@@ -64,11 +67,17 @@ export const useUserStore = create<UserState>()(
           return matchesSearch && matchesFilter;
         });
       },
+      setLoading: (loading) => set(() => ({ isLoading: loading })),
     }),
     {
       name: "users-storage",
       getStorage: () =>
         typeof window !== "undefined" ? localStorage : (undefined as any),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.setLoading(false);
+        }
+      },
     }
   )
 );
