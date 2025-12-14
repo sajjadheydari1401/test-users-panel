@@ -14,6 +14,7 @@ type UserState = {
   setSearch: (s: string) => void;
   setFilterStatus: (s: "all" | UserStatus) => void;
   reset: () => void;
+  getFilteredUsers: () => User[];
 };
 
 export const useUserStore = create<UserState>()(
@@ -51,6 +52,18 @@ export const useUserStore = create<UserState>()(
       setFilterStatus: (s) => set(() => ({ filterStatus: s })),
       reset: () =>
         set(() => ({ users: mockUsers, search: "", filterStatus: "all" })),
+      getFilteredUsers: () => {
+        const { users, search, filterStatus } = get();
+        return users.filter((user) => {
+          const matchesSearch =
+            user.name.toLowerCase().includes(search.toLowerCase()) ||
+            user.email.toLowerCase().includes(search.toLowerCase()) ||
+            user.role.toLowerCase().includes(search.toLowerCase());
+          const matchesFilter =
+            filterStatus === "all" || user.status === filterStatus;
+          return matchesSearch && matchesFilter;
+        });
+      },
     }),
     {
       name: "users-storage",
